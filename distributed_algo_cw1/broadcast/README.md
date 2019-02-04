@@ -1,21 +1,21 @@
-# Broadcast
+# ClientServer
 
 **TODO: Add description**
 
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `broadcast` to your list of dependencies in `mix.exs`:
+by adding `client_server` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:broadcast, "~> 0.1.0"}
+    {:client_server, "~> 0.1.0"}
   ]
 end
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/broadcast](https://hexdocs.pm/broadcast).
+be found at [https://hexdocs.pm/client_server](https://hexdocs.pm/client_server).
 
