@@ -2,14 +2,19 @@
 # distributed algorithms, n.dulay, 8 jan 18
 # Makefile, v1
 
-MAIN    = broadcast.main
+PEERS   = 5
+MAIN    = Broadcast.main
 PROJECT = da347
 NETWORK = $(PROJECT)_network
 
+LOCAL	 = mix run --no-halt -e $(MAIN) $(PEERS)
 COMPOSE = docker-compose -p $(PROJECT)
 
 compile:
 	mix compile
+
+run:
+	$(LOCAL)
 
 clean:
 	mix clean
