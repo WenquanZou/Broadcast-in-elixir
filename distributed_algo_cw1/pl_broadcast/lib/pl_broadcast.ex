@@ -1,18 +1,20 @@
-defmodule PlBroadcast do
-  @moduledoc """
-  Documentation for PlBroadcast.
-  """
+defmodule PLBroadcast do
+  def main do
+    no_peers = hd(DAC.int_args())
+    max_broadcasts = 10_000_000
+    timeout = 3000
 
-  @doc """
-  Hello world.
+    IO.puts ["PLBroadcasting at ", DAC.self_string()]
 
-  ## Examples
+    # Create peers
+    peers = for i <- 0..(no_peers - 1), do:
+      DAC.node_spawn("", 1, Peer, :start, [])
 
-      iex> PlBroadcast.hello()
-      :world
+    #Binding every peer with its neighbours
+    for peer <- peers, do:
+      send peer, {:bind, peers}
 
-  """
-  def hello do
-    :world
+    for peer <- peers, do:
+      send peer, { :broadcast, max_broadcasts, timeout }
   end
 end
