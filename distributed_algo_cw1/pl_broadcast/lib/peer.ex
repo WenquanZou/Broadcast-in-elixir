@@ -1,50 +1,9 @@
 defmodule Peer do
+  def start broadcast_system do
 
-  def start do
+    pid_com = DAC.node_spawn("", 1, Com, :start, [])
+    pid_pl = DAC.node_spawn("", 1, PL, :start, [pid_com])
 
-    IO.puts ["Create peer at ", DAC.self_string()]
-    receive do
-      {:bind, neighbours} ->
-        next neighbours
-    end
+    send broadcast_system, {:pl_created, pid_pl}
   end
-
-  defp next(neighbours) do
-  messages = Enum.reduce neighbours, %{}, fn(peer, acc) -> Map.put(acc, peer, {0, 0}) end
-
-  IO.inspect messages
-    receive do
-      {:broadcast, max_broadcasts, timeout} ->
-        listen(messages, neighbours, 0, max_broadcasts, timeout)
-    end
-  end
-
-  defp listen(messages, nodes, timeout, max_broadcasts, max_timeout) do
-    receive do
-      { :message, pid} ->
-        {sent, received} = messages[pid]
-        listen(Map.put(messages, pid, {sent, received+1}), nodes, timeout, max_broadcasts, max_timeout)
-      after
-        timeout ->
-          if sent(messages) < max_broadcasts do
-
-            messages = Enum.reduce nodes, messages,
-            fn(peer, acc) -> send peer, {:message, self()};
-              {sent, received} = messages[peer];
-              Map.put(acc, peer, { sent+1, received})
-            end
-
-            timeout = if sent(messages) == max_broadcasts, do:
-            max_timeout, else: timeout
-
-            listen(messages, nodes, timeout, max_broadcasts, max_timeout)
-          else
-            IO.puts "#{DAC.self_string()}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
-          end
-      end
-    end
-    defp sent(messages) do
-      {sent, _} = messages[self()]
-      sent
-    end
 end
