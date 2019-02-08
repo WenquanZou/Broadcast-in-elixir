@@ -1,46 +1,47 @@
 defmodule Com do
 
-  def start() do
+  def start(processes) do
 
     receive do
-      {:bind, my_pl, pls} ->
-        next(my_pl, pls)
+      {:bind, beb, pid_peer} ->
+        next(beb, processes, pid_peer)
     end
   end
 
-  defp next(my_pl, pls) do
-  messages = Enum.reduce pls, %{}, fn(peer, acc) -> Map.put(acc, peer, {0, 0}) end
+  defp next(my_beb, processes, pid_peer) do
+  messages = Enum.reduce processes, %{}, fn(peer, acc) -> Map.put(acc, peer, {0, 0}) end
 
   IO.inspect messages
     receive do
-      {:com_forward, {:broadcast, max_broadcasts, timeout}, _} ->
-        listen(messages, my_pl, pls, 0, max_broadcasts, timeout)
+      {:beb_deliver, _, {:beb_broadcast, max_broadcasts, timeout}} ->
+        listen(messages, my_beb, 0, max_broadcasts, timeout, pid_peer)
     end
   end
 
-  defp listen(messages, my_pl, pls, timeout, max_broadcasts, max_timeout) do
+  defp listen(messages, my_beb, timeout, max_broadcasts, max_timeout, pid_peer) do
     receive do
-      { :com_forward, _, pid} ->
-        {sent, received} = messages[pid]
-        listen(Map.put(messages, pid, {sent, received+1}), my_pl, pls, timeout, max_broadcasts, max_timeout)
+      {:beb_deliver, from, _} ->
+        {sent, received} = messages[from]
+        listen(Map.put(messages, from, {sent, received+1}), my_beb, timeout, max_broadcasts, max_timeout, pid_peer)
       after
         timeout ->
-          if sent(messages, my_pl) < max_broadcasts do
-
-            messages = Enum.reduce pls, messages,
-            fn(peer, acc) -> send my_pl, {:pl_send, {:message}, peer};
+          if sent(messages) < max_broadcasts do
+            send my_beb, {:beb_broadcast, {:message}}
+            messages = Enum.reduce Map.keys(messages), messages,
+            fn(peer, acc) ->
               {sent, received} = messages[peer];
               Map.put(acc, peer, { sent+1, received})
             end
-
-            listen(messages, my_pl, pls, timeout, max_broadcasts, max_timeout)
+            timeout = if sent(messages) == max_broadcasts, do:
+            max_timeout, else: timeout
+            listen(messages, my_beb, timeout, max_broadcasts, max_timeout, pid_peer)
           else
-            IO.puts "#{DAC.self_string()}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
+            IO.puts "#{inspect pid_peer}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
           end
       end
     end
-    defp sent(messages, my_pl) do
-      {sent, _} = messages[my_pl]
+    defp sent(messages) do
+      {sent, _} = hd(Map.values(messages))
       sent
     end
 end
