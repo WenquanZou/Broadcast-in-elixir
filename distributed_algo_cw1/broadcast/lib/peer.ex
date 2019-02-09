@@ -15,8 +15,8 @@ defmodule Peer do
   IO.inspect messages
     receive do
       {:broadcast, max_broadcasts, timeout} ->
-        timer = Process.send_after(self(), {:timeout}, timeout)
-        listen(messages, neighbours, 0, max_broadcasts, timeout, timer)
+        Process.send_after(self(), {:timeout}, timeout)
+        listen(messages, neighbours, max_broadcasts)
     end
   end
 
@@ -29,16 +29,16 @@ defmodule Peer do
     messages
   end
 
-  defp listen(messages, nodes, time, max_broadcasts, timeout, timer) do
+  defp listen(messages, nodes, max_broadcasts) do
     receive do
       { :message, pid} ->
         {sent, received} = messages[pid]
-        listen(Map.put(messages, pid, {sent, received+1}), nodes, time, max_broadcasts, timeout, timer)
+        listen(Map.put(messages, pid, {sent, received+1}), nodes, max_broadcasts)
       {:timeout} -> IO.puts "#{DAC.self_string()}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
       after
         0 ->
           messages = if sent(messages) < max_broadcasts, do: broadcast(nodes, messages), else: messages
-          listen(messages, nodes, time, max_broadcasts, timeout, timer)
+          listen(messages, nodes, max_broadcasts)
       end
     end
     defp sent(messages) do
