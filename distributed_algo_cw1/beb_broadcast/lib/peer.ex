@@ -20,6 +20,5 @@ defmodule Peer do
         send(beb, {:bind, pid_pl, pid_com})
         send(pid_com, {:bind, beb, self()})
     end
-
   end
 end
