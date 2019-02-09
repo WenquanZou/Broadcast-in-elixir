@@ -15,32 +15,30 @@ defmodule Peer do
   IO.inspect messages
     receive do
       {:broadcast, max_broadcasts, timeout} ->
-        listen(messages, neighbours, 0, max_broadcasts, timeout)
+        timer = Process.send_after(self(), {:timeout}, timeout)
+        listen(messages, neighbours, 0, max_broadcasts, timeout, timer)
     end
   end
 
-  defp listen(messages, nodes, timeout, max_broadcasts, max_timeout) do
+  defp broadcast(nodes, messages) do
+    messages = Enum.reduce nodes, messages,
+    fn(peer, acc) -> send peer, {:message, self()};
+      {sent, received} = messages[peer];
+      Map.put(acc, peer, { sent+1, received})
+    end
+    messages
+  end
+
+  defp listen(messages, nodes, time, max_broadcasts, timeout, timer) do
     receive do
       { :message, pid} ->
         {sent, received} = messages[pid]
-        listen(Map.put(messages, pid, {sent, received+1}), nodes, timeout, max_broadcasts, max_timeout)
+        listen(Map.put(messages, pid, {sent, received+1}), nodes, time, max_broadcasts, timeout, timer)
+      {:timeout} -> IO.puts "#{DAC.self_string()}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
       after
-        timeout ->
-          if sent(messages) < max_broadcasts do
-
-            messages = Enum.reduce nodes, messages,
-            fn(peer, acc) -> send peer, {:message, self()};
-              {sent, received} = messages[peer];
-              Map.put(acc, peer, { sent+1, received})
-            end
-
-            timeout = if sent(messages) == max_broadcasts, do:
-            max_timeout, else: timeout
-
-            listen(messages, nodes, timeout, max_broadcasts, max_timeout)
-          else
-            IO.puts "#{DAC.self_string()}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
-          end
+        0 ->
+          messages = if sent(messages) < max_broadcasts, do: broadcast(nodes, messages), else: messages
+          listen(messages, nodes, time, max_broadcasts, timeout, timer)
       end
     end
     defp sent(messages) do

@@ -1,7 +1,7 @@
 defmodule Broadcast do
   def main do
     no_peers = hd(DAC.int_args())
-    max_broadcasts = 1000
+    max_broadcasts = 10_000_000
     timeout = 3000
 
     IO.puts ["Broadcasting at ", DAC.self_string()]
