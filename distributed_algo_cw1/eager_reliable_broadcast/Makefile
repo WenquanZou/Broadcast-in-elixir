@@ -7,7 +7,7 @@
 PEERS    = 5
 
 # call main (for non-docker single node), main_net (for docker), main_ssh (for lan ssh)
-MAIN     = Broadcast.main
+MAIN     = EagerReliableBroadcast.main
 MAIN_NET = Broadcasting.main_net
 MAIN_SSH = Broadcasting.main_ssh
 

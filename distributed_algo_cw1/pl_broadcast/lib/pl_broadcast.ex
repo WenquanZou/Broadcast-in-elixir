@@ -17,6 +17,7 @@ defmodule PLBroadcast do
     for pl <- all_pls, do:
       send pl, { :pl_deliver, {:broadcast, max_broadcasts, timeout }, self()}
   end
+
   def waiting_for_connection(no_pls, pls) do
     if (length(pls) == no_pls) do
       pls

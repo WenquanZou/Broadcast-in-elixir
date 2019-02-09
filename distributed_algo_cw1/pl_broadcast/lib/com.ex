@@ -33,7 +33,7 @@ defmodule Com do
               Map.put(acc, peer, { sent+1, received})
             end
 
-            timeout = if sent(messages, my_pl) == max_broadcasts, do:
+            timeout = if sent(messages,my_pl) == max_broadcasts, do:
             max_timeout, else: timeout
 
             listen(messages, my_pl, pls, timeout, max_broadcasts, max_timeout)

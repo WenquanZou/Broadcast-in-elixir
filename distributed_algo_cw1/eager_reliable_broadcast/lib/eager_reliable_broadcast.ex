@@ -1,10 +1,10 @@
-defmodule BEBBroadcast do
+defmodule EagerReliableBroadcast do
   def main do
     no_peers = hd(DAC.int_args())
     max_broadcasts = 1000
     timeout = 3000
 
-    IO.puts ["BebBroadcasting at ", DAC.self_string()]
+    IO.puts ["EagerReliableBroadcast at ", DAC.self_string()]
 
     # Create peers
     peers = for (_ <- 0..(no_peers - 1)), do:
@@ -18,7 +18,9 @@ defmodule BEBBroadcast do
       send peer, {:bindAll, map_pls}
 
     for pl <- Map.values(map_pls), do:
-      send pl, {:pl_deliver, self(), {:beb_broadcast, max_broadcasts, timeout }}
+      send pl, {:pl_deliver, self(), {:rb_data, self(), 0, {:rb_broadcast, max_broadcasts, timeout}}}
+
+    Process.send_after(Enum.at(peers, 3), {:kill_process}, 5)
   end
 
   def waiting_for_connection(no_pls, pls_map) do
