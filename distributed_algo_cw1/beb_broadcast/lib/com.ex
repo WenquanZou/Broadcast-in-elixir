@@ -23,23 +23,23 @@ defmodule Com do
       {:beb_deliver, from, _} ->
         {sent, received} = messages[from]
         listen(Map.put(messages, from, {sent, received+1}), my_beb, timeout, max_broadcasts, max_timeout, pid_peer)
-      after
-        timeout ->
-          if sent(messages) < max_broadcasts do
-            send my_beb, {:beb_broadcast, {:message}}
-            messages = Enum.reduce Map.keys(messages), messages,
-            fn(peer, acc) ->
-              {sent, received} = messages[peer];
-              Map.put(acc, peer, { sent+1, received})
-            end
-            timeout = if sent(messages) == max_broadcasts, do:
-            max_timeout, else: timeout
-            listen(messages, my_beb, timeout, max_broadcasts, max_timeout, pid_peer)
-          else
-            IO.puts "#{inspect pid_peer}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
+    after
+      timeout ->
+        if sent(messages) < max_broadcasts do
+          send my_beb, {:beb_broadcast, {:message}}
+          messages = Enum.reduce Map.keys(messages), messages,
+          fn(peer, acc) ->
+            {sent, received} = messages[peer];
+            Map.put(acc, peer, { sent+1, received})
           end
+          timeout = if sent(messages) == max_broadcasts, do:
+          max_timeout, else: timeout
+          listen(messages, my_beb, timeout, max_broadcasts, max_timeout, pid_peer)
+        else
+        IO.puts "#{inspect pid_peer}: #{for p <- messages, do: ({_, t} = p; inspect t)}"
+        end
       end
-    end
+  end
     defp sent(messages) do
       {sent, _} = hd(Map.values(messages))
       sent

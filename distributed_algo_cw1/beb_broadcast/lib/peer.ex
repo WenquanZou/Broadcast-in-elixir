@@ -10,7 +10,7 @@ defmodule Peer do
     pid_com = DAC.node_spawn("", 1, Com, :start, [peers])
 
     beb = DAC.node_spawn("",1, Beb, :start, [peers])
-    pid_pl = DAC.node_spawn("", 1, PL, :start, [])
+    pid_pl = DAC.node_spawn("", 1, PL, :start, [self()])
 
     send broadcast_system, {:pl_created, self(), pid_pl}
 
