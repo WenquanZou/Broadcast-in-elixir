@@ -8,7 +8,7 @@ PEERS    = 5
 
 # call main (for non-docker single node), main_net (for docker), main_ssh (for lan ssh)
 MAIN     = Broadcast.main
-MAIN_NET = Broadcasting.main_net
+MAIN_NET = Broadcast.main_net
 MAIN_SSH = Broadcasting.main_ssh
 
 PROJECT  = da347
