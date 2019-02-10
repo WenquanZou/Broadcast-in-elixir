@@ -12,7 +12,6 @@ defmodule Peer do
   defp next(neighbours) do
   messages = Enum.reduce neighbours, %{}, fn(peer, acc) -> Map.put(acc, peer, {0, 0}) end
 
-  IO.inspect messages
     receive do
       {:broadcast, max_broadcasts, timeout} ->
         Process.send_after(self(), {:timeout}, timeout)

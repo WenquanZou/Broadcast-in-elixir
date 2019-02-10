@@ -15,7 +15,7 @@ PROJECT  = da347
 NETWORK  = $(PROJECT)_network
 
 LOCAL	 = mix run --no-halt -e $(MAIN) $(PEERS)
-COMPOSE  = MAIN=$(MAIN_NET) VERSION=$(VERSION) PEERS=$(PEERS) docker-compose -p $(PROJECT)
+COMPOSE  = MAIN=$(MAIN_NET) PEERS=$(PEERS) docker-compose -p $(PROJECT)
 SSH      = MAIN=$(MAIN_SSH) VERSION=$(VERSION) PEERS=$(PEERS)
 
 # non-docker compile and run
