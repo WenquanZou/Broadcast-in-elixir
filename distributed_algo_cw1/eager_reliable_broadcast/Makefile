@@ -8,14 +8,14 @@ PEERS    = 5
 
 # call main (for non-docker single node), main_net (for docker), main_ssh (for lan ssh)
 MAIN     = EagerReliableBroadcast.main
-MAIN_NET = Broadcasting.main_net
+MAIN_NET = EagerReliableBroadcast.main_net
 MAIN_SSH = Broadcasting.main_ssh
 
 PROJECT  = da347
 NETWORK  = $(PROJECT)_network
 
 LOCAL	 = mix run --no-halt -e $(MAIN) $(PEERS)
-COMPOSE  = MAIN=$(MAIN_NET) VERSION=$(VERSION) PEERS=$(PEERS) docker-compose -p $(PROJECT)
+COMPOSE  = MAIN=$(MAIN_NET) PEERS=$(PEERS) docker-compose -p $(PROJECT)
 SSH      = MAIN=$(MAIN_SSH) VERSION=$(VERSION) PEERS=$(PEERS)
 
 # non-docker compile and run

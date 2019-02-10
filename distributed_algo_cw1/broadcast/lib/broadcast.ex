@@ -8,7 +8,7 @@ defmodule Broadcast do
 
     # Create peers
     peers = for i <- 0..(no_peers - 1), do:
-      DAC.node_spawn("", 1, Peer, :start, [])
+      DAC.node_spawn("", i, Peer, :start, [])
 
     #Binding every peer with its neighbours
     for peer <- peers, do:
@@ -27,7 +27,7 @@ defmodule Broadcast do
 
     # Create peers
     peers = for i <- 0..(no_peers - 1), do:
-      DAC.node_spawn("", 1, Peer, :start, [])
+      DAC.node_spawn("", i, Peer, :start, [])
 
     #Binding every peer with its neighbours
     for peer <- peers, do:
