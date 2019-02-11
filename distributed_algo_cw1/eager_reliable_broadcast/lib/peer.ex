@@ -1,3 +1,4 @@
+# Yoon Kim (jyk416), Wenquan Zou (wz1816)
 defmodule Peer do
   def start broadcast_system do
     receive do
@@ -28,7 +29,6 @@ defmodule Peer do
         kill_process(pid_com, pid_pl, beb, rb)
         Process.exit(self(), :kill)
     end
-
   end
 
   def kill_process(com, pl, beb, rb) do

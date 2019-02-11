@@ -1,3 +1,4 @@
+# Yoon Kim (jyk416), Wenquan Zou (wz1816)
 defmodule PL do
   def start(com) do
     receive do
@@ -6,6 +7,7 @@ defmodule PL do
       next(com)
     end
   end
+  
   def next(com) do
     receive do
       {:pl_send, msg, dst} -> send(dst, {:pl_deliver, msg, self()})

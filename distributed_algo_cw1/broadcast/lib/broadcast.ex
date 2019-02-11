@@ -1,3 +1,4 @@
+# Yoon Kim (jyk416), Wenquan Zou (wz1816)
 defmodule Broadcast do
   def main do
     no_peers = hd(DAC.int_args())
@@ -18,6 +19,7 @@ defmodule Broadcast do
       send peer, { :broadcast, max_broadcasts, timeout }
   end
 
+  # Docker Implementation
   def main_net do
     no_peers = hd(DAC.int_args())
     max_broadcasts = 1000

@@ -1,3 +1,4 @@
+# Yoon Kim (jyk416), Wenquan Zou (wz1816)
 defmodule Peer do
   def start broadcast_system do
     receive do

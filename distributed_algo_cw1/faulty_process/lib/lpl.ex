@@ -1,3 +1,4 @@
+# Yoon Kim (jyk416), Wenquan Zou (wz1816)
 defmodule LPL do
   def start(pid_peer) do
     receive do
@@ -9,6 +10,7 @@ defmodule LPL do
     reliability = 30
     receive do
       {:pl_send, dst_process, msg} ->
+        # Simulate unreliable messages sending
         if (DAC.random(100) <= reliability) do
           send(pls_map[dst_process], {:pl_deliver, pid_peer, msg})
         end
