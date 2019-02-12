@@ -13,7 +13,7 @@ defmodule PLBroadcast do
 
     all_pls = waiting_for_connection(no_peers, [])
 
-    or pl <- all_pls, do:
+    for pl <- all_pls, do:
       send pl, {:bind, all_pls}
 
     for pl <- all_pls, do:
