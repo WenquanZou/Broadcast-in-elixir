@@ -2,8 +2,8 @@
 defmodule EagerReliableBroadcast do
   def main do
     no_peers = hd(DAC.int_args())
-    max_broadcasts = 100000
-    timeout = 30000
+    max_broadcasts = 1000
+    timeout = 3000
 
     IO.puts ["EagerReliableBroadcast at ", DAC.self_string()]
 
